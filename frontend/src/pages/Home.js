@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import EventForm from "../components/EventForm";
-import EventList from "../components/EventList";
 import axios from "../api/axios";
 
 export default function Home() {
