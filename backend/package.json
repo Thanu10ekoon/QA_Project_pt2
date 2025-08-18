@@ -13,6 +13,10 @@
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
-    "mysql": "^2.18.1"
+  "mysql": "^2.18.1",
+  "express-rate-limit": "^7.4.0",
+  "xss": "^1.0.15",
+  "express-validator": "^7.2.1",
+  "helmet": "^7.2.0"
   }
 }

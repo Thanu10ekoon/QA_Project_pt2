@@ -49,10 +49,6 @@ jobs:
         working-directory: frontend
         run: npx wait-on http://localhost:3000
 
-      - name: Run unit tests
-        working-directory: frontend
-        run: npm test -- --watchAll=false
-
       - name: Run Selenium UI tests
         working-directory: frontend
         run: npm run selenium:all

@@ -2,7 +2,6 @@
 import { render, fireEvent } from '@testing-library/react';
 import EventForm from '../EventForm';
 
-// Mock axios to avoid network
 jest.mock('../../api/axios', () => ({ post: jest.fn(() => Promise.resolve({ data: { msg: 'ok'} })) }));
 
 describe('EventForm reminder logic', () => {
