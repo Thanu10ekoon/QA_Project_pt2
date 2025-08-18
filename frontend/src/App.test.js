@@ -1,14 +1,8 @@
-import { render } from '@testing-library/react';
-
-// Mock axios before App import to avoid ESM transform issues in tests
-jest.mock('axios', () => ({
-  create: () => ({ get: jest.fn(), post: jest.fn() })
-}));
-
+import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('app renders without crashing', () => {
+test('renders learn react link', () => {
   render(<App />);
-  // Minimal smoke test
-  expect(true).toBe(true);
+  const linkElement = screen.getByText(/learn react/i);
+  expect(linkElement).toBeInTheDocument();
 });

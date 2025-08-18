@@ -7,54 +7,66 @@ on:
     branches: [ main, master ]
 
 jobs:
-  build-test-analyze:
+  backend-tests:
     runs-on: ubuntu-latest
-    env:
-      REACT_APP_BASE_URL: http://localhost:5000/api
-      CI: true
+    defaults:
+      run:
+        working-directory: backend
     steps:
       - uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
-
-      - name: Install backend deps (optional)
-        working-directory: backend
-        run: |
-          if [ -f package.json ]; then npm install; fi
-
-      - name: Install frontend deps
-        working-directory: frontend
+      - name: Install backend deps
         run: npm install
+      - name: Lint placeholder
+        run: echo "No backend tests yet"
 
-      # BUILD
-      - name: "Build: frontend"
+  frontend-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
         working-directory: frontend
-        run: npm run build
-
-      # TEST
-      - name: "Test: unit tests"
-        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install frontend deps
+        run: npm install
+      - name: Run unit tests
         run: npm test -- --watchAll=false
 
-      # ANALYSIS
-      - name: "Analysis: lint (non-blocking)"
-        working-directory: frontend
-        run: npx eslint . || echo "Lint warnings (ignored)"
-
-      - name: "Analysis: security audit (non-blocking)"
-        working-directory: frontend
-        run: npm audit --audit-level=high || true
-
-      - name: Upload build artifact
-        if: always()
-        uses: actions/upload-artifact@v4
+  selenium-ui:
+    runs-on: ubuntu-latest
+    needs: frontend-tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          name: frontend-build
-          path: frontend/build
-          if-no-files-found: warn
-
-      - name: Finish
-        run: echo "Pipeline completed (build, test, analysis)"
+          node-version: 20
+      - name: Install root tools
+        run: |
+          npm install --prefix frontend
+          npm install --save-dev selenium-webdriver chromedriver jest @jest/globals --prefix frontend
+      - name: Start backend
+        run: |
+          npm install --prefix backend
+          node backend/server.js &
+        env:
+          PORT: 5000
+      - name: Start frontend
+        run: |
+          npm start --prefix frontend &
+        env:
+          CI: true
+          REACT_APP_BASE_URL: http://localhost:5000/api
+      - name: Wait for services
+        run: |
+          npx wait-on http://localhost:3000 http://localhost:5000
+      - name: Run selenium tests
+        run: |
+          node tests/selenium/login_signup.test.js
+          node tests/selenium/event_flow.test.js
+        env:
+          REACT_APP_BASE_URL: http://localhost:5000/api

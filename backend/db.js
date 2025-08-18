@@ -1,29 +1,33 @@
-// db.js (now environment driven)
+// db.js
 const mysql = require('mysql');
 
 const dbConfig = {
-    host: process.env.DB_HOST || 'b0wfogeparw9tbiqltdk-mysql.services.clever-cloud.com',
-    user: process.env.DB_USER || 'uc7re1qyvlgndxfc',
-    password: process.env.DB_PASS || 'oZnz8f4VAR5MSl4lutJ5',
-    database: process.env.DB_NAME || 'b0wfogeparw9tbiqltdk',
+    host: 'b0wfogeparw9tbiqltdk-mysql.services.clever-cloud.com',
+    user: 'uc7re1qyvlgndxfc',
+    password: 'oZnz8f4VAR5MSl4lutJ5',
+    database: 'b0wfogeparw9tbiqltdk',
     acquireTimeout: 60000,
     timeout: 60000,
-    multipleStatements: false // disable multi statements for security
+    reconnect: true,
+    multipleStatements: true
 };
 
+// Use connection pool for better connection management
 const db = mysql.createPool({
     ...dbConfig,
-    connectionLimit: parseInt(process.env.DB_POOL_LIMIT || '10', 10),
+    connectionLimit: 10,
     queueLimit: 0
 });
 
+// Test initial connection
 db.getConnection((err, connection) => {
     if (err) {
-        console.error('MySQL connection error!', err.code);
+        console.error('MySQL connection error!', err);
     } else {
         console.log('MySQL connected');
         connection.release();
     }
 });
 
+// Export db
 module.exports = db;
