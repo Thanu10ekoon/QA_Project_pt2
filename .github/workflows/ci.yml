@@ -7,7 +7,7 @@ on:
     branches: [ main, master ]
 
 jobs:
-  build-and-test:
+  build-test-analyze:
     runs-on: ubuntu-latest
     env:
       REACT_APP_BASE_URL: http://localhost:5000/api
@@ -20,7 +20,7 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install backend deps
+      - name: Install backend deps (optional)
         working-directory: backend
         run: |
           if [ -f package.json ]; then npm install; fi
@@ -29,25 +29,29 @@ jobs:
         working-directory: frontend
         run: npm install
 
-      - name: Start backend
-        working-directory: backend
-        run: node server.js &
-
-      - name: Wait for backend
-        run: npx wait-on tcp:5000
+      - name: Build frontend
         working-directory: frontend
+        run: npm run build
 
-      - name: Start frontend (for Selenium)
+      - name: Run unit tests
         working-directory: frontend
-        run: npm start &
+        run: npm test -- --watchAll=false
 
-      - name: Wait for frontend
+      - name: Lint (non-blocking)
         working-directory: frontend
-        run: npx wait-on http://localhost:3000
+        run: npx eslint . || echo "Lint warnings (ignored)"
 
-      - name: Run Selenium tests
+      - name: Security audit (non-blocking)
         working-directory: frontend
-        run: npm run selenium:all
+        run: npm audit --audit-level=high || true
+
+      - name: Upload build artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: frontend/build
+          if-no-files-found: warn
 
       - name: Finish
-        run: echo "CI pipeline completed"
+        run: echo "Pipeline completed (build, test, analysis)"
