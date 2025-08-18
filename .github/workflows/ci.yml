@@ -27,11 +27,25 @@ jobs:
 
       - name: Install backend deps
         working-directory: backend
-        run: npm install
+        run: |
+          if [ -f package.json ]; then npm install; fi
 
       - name: Install frontend deps
         working-directory: frontend
         run: npm install
+
+      - name: Lint (frontend)
+        working-directory: frontend
+        run: |
+          npx eslint . || echo "Lint warnings (not failing build)"
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
+
+      - name: Backend syntax check
+        if: hashFiles('backend/**/*.js') != ''
+        run: node -c backend/server.js || echo "Node -c not strict; continuing"
 
       - name: Start backend
         working-directory: backend
@@ -41,18 +55,33 @@ jobs:
         run: npx wait-on tcp:5000
         working-directory: frontend
 
-      - name: Start frontend (React dev server)
+      - name: Start frontend (dev server for Selenium)
         working-directory: frontend
         run: npm start &
-      
+
       - name: Wait for frontend
         working-directory: frontend
         run: npx wait-on http://localhost:3000
+
+      - name: Run unit tests
+        working-directory: frontend
+        run: npm test -- --watchAll=false
 
       - name: Run Selenium UI tests
         working-directory: frontend
         run: npm run selenium:all
 
-      - name: Artifact placeholder
+      - name: Security audit (report only)
+        working-directory: frontend
+        run: npm audit --audit-level=high || true
+
+      - name: Archive build + reports
         if: always()
-        run: echo "Add coverage upload here"
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-artifacts
+          path: |
+            frontend/build
+            frontend/coverage
+            test/jmeter/report
+          if-no-files-found: ignore
