@@ -12,7 +12,6 @@ export default function Home() {
 
   useEffect(() => {
     if (user?.email) {
-      // Get pending invitations count
       axios.get(`/invitations/for-user/${user.email}`)
         .then(res => {
           const pending = res.data.filter(inv => !inv.response);
@@ -20,12 +19,11 @@ export default function Home() {
         })
         .catch(err => console.log('Error fetching invitations:', err));
 
-      // Get my events count
       axios.get(`/events/created/${user.email}`)
         .then(res => setMyEventsCount(res.data.length))
         .catch(err => console.log('Error fetching events:', err));
     }
-  }, []);
+  }, [user?.email]);
 
   return (
     <div className="container">

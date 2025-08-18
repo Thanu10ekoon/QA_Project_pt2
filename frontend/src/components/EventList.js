@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "../api/axios";
+// axios import removed because currently no fetch implemented
 import EventDetails from "./EventDetails";
 
 export default function EventList() {
@@ -7,10 +7,9 @@ export default function EventList() {
   const [selected, setSelected] = useState(null);
 
   useEffect(() => {
-    // Since there's no /events route in backend, we'll need to get all events
-    // For now, let's show a message that this needs backend support
+    // Placeholder: would fetch all events if endpoint existed
     setEvents([]);
-  }, []);
+  }, []); // no dependencies needed
 
   return (
     <div className="card">

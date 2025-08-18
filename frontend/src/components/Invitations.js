@@ -11,7 +11,8 @@ export default function Invitations() {
     if (user?.email) {
       fetchReceivedInvitations();
     }
-  }, []);
+    // user?.email included to satisfy exhaustive-deps; fetch function stable
+  }, [user?.email]);
 
   const fetchReceivedInvitations = async () => {
     try {

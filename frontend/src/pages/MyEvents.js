@@ -14,7 +14,7 @@ export default function MyEvents() {
     if (user?.email) {
       axios.get(`/events/created/${user.email}`).then(res => setEvents(res.data));
     }
-  }, []);
+  }, [user?.email]);
 
   return (
     <div className="container">
