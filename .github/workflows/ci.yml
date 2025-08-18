@@ -29,19 +29,22 @@ jobs:
         working-directory: frontend
         run: npm install
 
-      - name: Build frontend
+      # BUILD
+      - name: "Build: frontend"
         working-directory: frontend
         run: npm run build
 
-      - name: Run unit tests
+      # TEST
+      - name: "Test: unit tests"
         working-directory: frontend
         run: npm test -- --watchAll=false
 
-      - name: Lint (non-blocking)
+      # ANALYSIS
+      - name: "Analysis: lint (non-blocking)"
         working-directory: frontend
         run: npx eslint . || echo "Lint warnings (ignored)"
 
-      - name: Security audit (non-blocking)
+      - name: "Analysis: security audit (non-blocking)"
         working-directory: frontend
         run: npm audit --audit-level=high || true
 
