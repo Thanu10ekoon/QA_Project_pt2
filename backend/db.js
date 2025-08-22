@@ -1,16 +1,24 @@
 // db.js
 const mysql = require('mysql');
+require('dotenv').config();
 
 const dbConfig = {
-    host: 'b0wfogeparw9tbiqltdk-mysql.services.clever-cloud.com',
-    user: 'uc7re1qyvlgndxfc',
-    password: 'oZnz8f4VAR5MSl4lutJ5',
-    database: 'b0wfogeparw9tbiqltdk',
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME,
     acquireTimeout: 60000,
     timeout: 60000,
     reconnect: true,
-    multipleStatements: true
+    
 };
+
+// Basic validation to help debugging env issues
+['DB_HOST','DB_USER','DB_PASS','DB_NAME'].forEach(k => {
+    if (!process.env[k]) {
+        console.warn(`[WARN] Environment variable ${k} not set`);
+    }
+});
 
 // Use connection pool for better connection management
 const db = mysql.createPool({
