@@ -1,8 +1,16 @@
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('renders learn react link', () => {
+test('renders RSVP Event Manager app', () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+  const headerElement = screen.getByText(/RSVP Event Manager/i);
+  expect(headerElement).toBeInTheDocument();
+});
+
+test('renders login form when not authenticated', () => {
+  // Clear any stored user
+  window.localStorage.removeItem('user');
+  render(<App />);
+  const loginHeading = screen.getByText(/🔐 Login/i);
+  expect(loginHeading).toBeInTheDocument();
 });

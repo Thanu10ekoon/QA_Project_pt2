@@ -1,6 +1,6 @@
 // Unit Test 1: Simple rendering test for ProtectedRoute logic (indirect)
 import { render } from '@testing-library/react';
-import ProtectedRoute from '../../ProtectedRoute';
+import ProtectedRoute from '../ProtectedRoute';
 import { MemoryRouter } from 'react-router-dom';
 
 // We won't modify existing components; this test simulates absence of user

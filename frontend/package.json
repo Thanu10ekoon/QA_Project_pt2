@@ -39,6 +39,14 @@
       "last 1 safari version"
     ]
   },
+  "jest": {
+    "transformIgnorePatterns": [
+      "node_modules/(?!(axios)/)"
+    ],
+    "moduleNameMapper": {
+      "^axios$": "axios/dist/node/axios.cjs"
+    }
+  },
   "devDependencies": {
     "chromedriver": "^139.0.1",
     "selenium-webdriver": "^4.35.0"

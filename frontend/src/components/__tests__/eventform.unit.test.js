@@ -1,9 +1,9 @@
 // Unit Test 2: EventForm reminder add/remove logic using React Testing Library
 import { render, fireEvent } from '@testing-library/react';
-import EventForm from '../../EventForm';
+import EventForm from '../EventForm';
 
-// Mock axios to avoid network
-jest.mock('../../../api/axios', () => ({ post: jest.fn(() => Promise.resolve({ data: { msg: 'ok'} })) }));
+// Mock axios to avoid network (correct path: from __tests__ to src/api)
+jest.mock('../../api/axios', () => ({ post: jest.fn(() => Promise.resolve({ data: { msg: 'ok'} })) }));
 
 describe('EventForm reminder logic', () => {
   test('adds and removes reminders', () => {
