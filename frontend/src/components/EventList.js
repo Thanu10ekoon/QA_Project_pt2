@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import axios from "../api/axios";
 import EventDetails from "./EventDetails";
 
 export default function EventList() {

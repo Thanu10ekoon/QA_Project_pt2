@@ -1,5 +1,5 @@
 // src/components/Invitations.js
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import axios from "../api/axios";
 
 export default function Invitations() {
@@ -7,13 +7,7 @@ export default function Invitations() {
   const [loading, setLoading] = useState(true);
   const user = JSON.parse(localStorage.getItem("user"));
 
-  useEffect(() => {
-    if (user?.email) {
-      fetchReceivedInvitations();
-    }
-  }, []);
-
-  const fetchReceivedInvitations = async () => {
+  const fetchReceivedInvitations = useCallback(async () => {
     try {
       setLoading(true);
       const res = await axios.get(`/invitations/for-user/${user.email}`);
@@ -36,7 +30,13 @@ export default function Invitations() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user.email]);
+
+  useEffect(() => {
+    if (user?.email) {
+      fetchReceivedInvitations();
+    }
+  }, [user?.email, fetchReceivedInvitations]); // Added fetchReceivedInvitations dependency
 
   const respondToInvitation = async (eventId, response) => {
     try {

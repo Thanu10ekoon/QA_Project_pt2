@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import EventForm from "../components/EventForm";
-import EventList from "../components/EventList";
 import axios from "../api/axios";
 
 export default function Home() {
@@ -25,7 +24,7 @@ export default function Home() {
         .then(res => setMyEventsCount(res.data.length))
         .catch(err => console.log('Error fetching events:', err));
     }
-  }, []);
+  }, [user?.email]); // Added user?.email dependency
 
   return (
     <div className="container">
